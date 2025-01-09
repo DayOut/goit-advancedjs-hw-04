@@ -13,12 +13,25 @@
       <div class="container">
         <form class="form js-form">
           <label class="form-label">
-            <input class="form-input js-search-input" name="user-query" type="text" placeholder="Search images...">
+            <input
+              class="form-input js-search-input"
+              name="user-query"
+              type="text"
+              placeholder="Search images..."
+            />
           </label>
-          <button class="form-submit-btn js-submit-btn" type="submit">Search</button>
+          <button class="form-submit-btn js-submit-btn" type="submit">
+            Search
+          </button>
         </form>
         <ul class="gallery-container js-gallery"></ul>
       </div>
+      <button
+        class="load-more form-submit-btn js-submit-btn"
+        style="display: none"
+      >
+        Load more
+      </button>
     </main>
     <div class="loader-wrapper js-loader">
       <span class="loader"></span>
