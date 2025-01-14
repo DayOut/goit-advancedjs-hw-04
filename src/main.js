@@ -1,10 +1,11 @@
 import SimpleLightbox from 'simplelightbox';
 import fetchApiData from './js/pixabay-api';
 import generateGalleryMarkup from './js/render-functions';
+import iziToast from 'izitoast';
 
-let page = 1, totalHits = 0, lastQuery = '';
+let page = 1, lastQuery = '';
 
-const perPage = 10,
+const perPage = 15,
   loadMoreGap = 44,
   formElement = document.querySelector('.js-form'),
   loaderElement = document.querySelector('.js-loader'),
@@ -18,16 +19,20 @@ const perPage = 10,
     event.preventDefault();
     loaderElement.style.display = 'flex';
     var query = event.target.elements['user-query'].value;
-    lastQuery = query
+    lastQuery = query;
+    page = 1;
 
     fetchApiData(query, page, perPage)
       .then(response => {
+        if (response.length == 0) {
+          galleryContainer.innerHTML = '';
+          loadMoreBtn.style.display = 'none';
+          return;
+        }
         let images = response.images;
         galleryContainer.innerHTML = generateGalleryMarkup(images);
         simpleLightboxInstance.refresh();
-        if (response.total > perPage) {
-          loadMoreBtn.style.display = 'block';
-        }
+        loadMoreBtn.style.display = (response.total > perPage) ? 'block' : 'none';
       })
       .finally(() => {
         formElement.reset();
@@ -36,6 +41,7 @@ const perPage = 10,
   },
   loadMoreHandler = async () => {
     page += 1;
+    loaderElement.style.display = 'flex';
     fetchApiData(lastQuery, page, perPage)
       .then(response => {
         let images = response.images;
@@ -44,16 +50,20 @@ const perPage = 10,
         let totalShownElements = page * perPage;
         if (totalShownElements >= response.total) {
           loadMoreBtn.style.display = 'none';
+          iziToast.info({
+            message:
+              "We're sorry, but you've reached the end of search results.",
+            position: 'topRight',
+          });
         }
       })
       .finally(() => {
         formElement.reset();
-        loaderElement.style.display = 'none';
         setTimeout(() => {
           const galleryCards = document.querySelectorAll('.gallery-card');
           const lastGalleryCard = galleryCards[galleryCards.length - 1];
           const height = lastGalleryCard.offsetHeight;
-
+          loaderElement.style.display = 'none';
           window.scrollBy({
             top: height * 2 - loadMoreGap,
             behavior: 'smooth',
