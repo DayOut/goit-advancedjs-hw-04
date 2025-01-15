@@ -21,6 +21,11 @@ const fetchApiData = (queryValue, page, perPage) => {
     .then(response => {
       if (response.status != 200) {
         console.log(response);
+        iziToast.error({
+          message:
+            'Something went wrong. Please try again later',
+          position: 'topRight',
+        });
         throw new Error(response.status);
       }
       console.log(typeof response);
@@ -43,6 +48,11 @@ const fetchApiData = (queryValue, page, perPage) => {
       };
     })
     .catch(error => {
+      iziToast.error({
+        message:
+          'Something went wrong. Please try again later',
+        position: 'topRight',
+      });
       console.log(error);
       return [];
     });

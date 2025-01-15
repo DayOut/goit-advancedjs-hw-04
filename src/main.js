@@ -17,6 +17,10 @@ const perPage = 15,
   }),
   submitHandler = event => {
     event.preventDefault();
+    if (lastQuery === query && page == 1) {
+      return;
+    }
+
     loaderElement.style.display = 'flex';
     var query = event.target.elements['user-query'].value;
     lastQuery = query;
@@ -45,7 +49,7 @@ const perPage = 15,
     fetchApiData(lastQuery, page, perPage)
       .then(response => {
         let images = response.images;
-        galleryContainer.innerHTML += generateGalleryMarkup(images);
+        galleryContainer.insertAdjacentHTML('beforeend', generateGalleryMarkup(images));
         simpleLightboxInstance.refresh();
         let totalShownElements = page * perPage;
         if (totalShownElements >= response.total) {
